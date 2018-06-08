@@ -35,7 +35,7 @@ import Data.Complex
 import Data.Data
 import Data.Distributive
 import Data.Foldable as Foldable hiding (sum)
-import Data.Functor.Bind
+import Data.Functor.Semimonad
 import Data.Functor.Extend
 import Data.Hashable
 import Data.Hashable.Lifted
@@ -43,8 +43,8 @@ import Data.Int
 import Data.List as List hiding (sum)
 import Data.List.NonEmpty (NonEmpty(..))
 import Data.Semigroup
-import Data.Semigroup.Foldable
-import Data.Semigroup.Traversable
+import Data.Semigroup.Semifoldable
+import Data.Semigroup.Semitraversable
 import Data.Serialize as Serialize
 #if __GLASGOW_HASKELL__ < 710
 import Data.Traversable
@@ -122,17 +122,17 @@ instance Foldable Log where
   foldMap f (Exp a) = f a
   {-# INLINE foldMap #-}
 
-instance Foldable1 Log where
-  foldMap1 f (Exp a) = f a
-  {-# INLINE foldMap1 #-}
+instance Semifoldable Log where
+  semifoldMap f (Exp a) = f a
+  {-# INLINE semifoldMap #-}
 
 instance Traversable Log where
   traverse f (Exp a) = Exp <$> f a
   {-# INLINE traverse #-}
 
-instance Traversable1 Log where
-  traverse1 f (Exp a) = Exp <$> f a
-  {-# INLINE traverse1 #-}
+instance Semitraversable Log where
+  semitraverse f (Exp a) = Exp <$> f a
+  {-# INLINE semitraverse #-}
 
 instance Distributive Log where
   distribute = Exp . fmap ln
@@ -158,11 +158,11 @@ instance ComonadApply Log where
   Exp f <@> Exp a = Exp (f a)
   {-# INLINE (<@>) #-}
 
-instance Apply Log where
+instance Semiapplicative Log where
   Exp f <.> Exp a = Exp (f a)
   {-# INLINE (<.>) #-}
 
-instance Bind Log where
+instance Semimonad Log where
   Exp a >>- f = f a
   {-# INLINE (>>-) #-}
 
